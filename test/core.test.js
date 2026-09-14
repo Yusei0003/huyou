@@ -25,6 +25,10 @@ t('空・不正は null', () => {
   [null, undefined, '', 'あ', 0, -5].forEach(v => assert.strictEqual(Core.toDate(v), null));
 });
 
+console.log('\n[ISO日付] CSV出力用');
+t('YYYY-MM-DDでゼロ埋めする', () => assert.strictEqual(Core.formatIso(D(1960, 3, 1)), '1960-03-01'));
+t('不正な値は空文字', () => assert.strictEqual(Core.formatIso(null), ''));
+
 console.log('\n[和暦略記] docs/spec.md 4.8');
 t('記入例と一致 S35.3.1', () => assert.strictEqual(Core.formatWareki(D(1960, 3, 1)), 'S35.3.1'));
 t('ゼロ埋めしない', () => assert.strictEqual(Core.formatWareki(D(1955, 7, 20)), 'S30.7.20'));

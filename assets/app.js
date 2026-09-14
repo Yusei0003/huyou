@@ -169,6 +169,15 @@
     $('secPrint').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  /** 一覧に表示中（所属フィルタ反映後）の対象扶養親族をCSVで書き出す。印刷用チェックとは独立。 */
+  function exportCsv() {
+    var list = visibleSheets();
+    if (!list.length) { alert('CSVに出力する対象がありません。'); return; }
+    var csv = Csv.build(list);
+    var filename = '対象扶養親族一覧_' + state.result.fiscal.fy + '年度.csv';
+    Csv.download(csv, filename);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     var fy = Core.currentFy();
     $('fy').value = fy;
@@ -204,6 +213,7 @@
       visibleSheets().forEach(function (s) { state.selected[s.no] = false; }); drawRows();
     });
     $('btnPreview').addEventListener('click', preview);
+    $('btnCsv').addEventListener('click', exportCsv);
     $('btnPrint').addEventListener('click', function () { window.print(); });
     $('btnBack').addEventListener('click', function () {
       $('sheets').innerHTML = '';

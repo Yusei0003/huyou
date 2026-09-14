@@ -54,6 +54,14 @@
     return null;
   }
 
+  /** Date → "YYYY-MM-DD"（CSV出力用。UTC基準で内部表現と一致させる）。不正なら空文字。 */
+  function formatIso(dt) {
+    if (!(dt instanceof Date) || isNaN(dt.getTime())) return '';
+    var p = parts(dt);
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    return p.y + '-' + pad(p.m) + '-' + pad(p.d);
+  }
+
   /** Date → 和暦略記（例: 1960-03-01 → "S35.3.1"）。範囲外は null。 */
   function formatWareki(dt) {
     if (!(dt instanceof Date) || isNaN(dt.getTime())) return null;
@@ -225,7 +233,8 @@
         birth: birth,
         birthWareki: formatWareki(birth),
         age: calcAge(birth, fp.baseDate),
-        jyun: toNum(d[C.jyun])
+        jyun: toNum(d[C.jyun]),
+        kingaku: kingaku          // 扶養手当月額。様式には印字しないが、CSV一覧では参照用に出力する
       });
       stats.targetDeps++;
     });
@@ -273,7 +282,7 @@
 
   return {
     ERAS: ERAS, ymd: ymd, toDate: toDate, toNum: toNum, toStr: toStr,
-    formatWareki: formatWareki, calcAge: calcAge, normalizeKey: normalizeKey,
+    formatWareki: formatWareki, formatIso: formatIso, calcAge: calcAge, normalizeKey: normalizeKey,
     fiscalParams: fiscalParams, currentFy: currentFy, extract: extract
   };
 });
