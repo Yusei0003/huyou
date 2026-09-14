@@ -1,0 +1,12 @@
+{
+  "name": "huyou-chosasho",
+  "version": "1.0.0",
+  "private": true,
+  "description": "扶養親族確認調査書（扶養手当）印刷システム。アプリ本体はブラウザだけで動作し、Node.js は開発時のテスト実行にのみ使用します。",
+  "scripts": {
+    "test": "node test/core.test.js"
+  },
+  "devDependencies": {
+    "xlsx": "0.18.5"
+  }
+}

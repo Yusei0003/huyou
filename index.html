@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>扶養親族確認調査書 印刷システム</title>
+<link rel="stylesheet" href="assets/ui.css">
+<link rel="stylesheet" href="assets/form.css">
+</head>
+<body>
+
+<div id="ui">
+  <header>
+    <h1>扶養親族確認調査書 印刷システム</h1>
+    <p class="sub">扶養手当／陸前高田市 総務部総務課 職員係</p>
+  </header>
+
+  <section class="card">
+    <h2>１　条件とデータの読み込み</h2>
+    <div class="grid">
+      <label>対象年度（西暦）
+        <input type="number" id="fy" min="2000" max="2100" step="1">
+        <span class="hint" id="fyHint"></span>
+      </label>
+      <label>名簿データ（.xlsx）
+        <input type="file" id="fRoster" accept=".xlsx,.xls">
+      </label>
+      <label>扶養データ（.xlsx）
+        <input type="file" id="fDeps" accept=".xlsx,.xls">
+      </label>
+    </div>
+    <div class="row">
+      <button id="btnRun" class="primary" disabled>読み込んで抽出する</button>
+      <span class="hint">ファイルはこのPCの中だけで処理されます。外部には一切送信しません。</span>
+    </div>
+  </section>
+
+  <section class="card hidden" id="secResult">
+    <h2>２　抽出結果</h2>
+    <div id="stats" class="stats"></div>
+    <div id="msgs"></div>
+  </section>
+
+  <section class="card hidden" id="secList">
+    <h2>３　印刷対象</h2>
+    <div class="row">
+      <label class="inline">所属
+        <select id="filterShozoku"><option value="">すべて</option></select>
+      </label>
+      <button id="btnAll" class="ghost">表示中をすべて選択</button>
+      <button id="btnNone" class="ghost">表示中の選択を解除</button>
+      <span class="hint" id="selCount"></span>
+    </div>
+    <div class="tableWrap">
+      <table id="list">
+        <thead><tr>
+          <th class="w1"><input type="checkbox" id="chkAll"></th>
+          <th>所属</th><th>職員番号</th><th>職員氏名</th>
+          <th>対象扶養親族</th><th class="w1">人数</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="row">
+      <button id="btnPreview" class="primary">印刷プレビューを作る</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="secPrint">
+    <h2>４　印刷</h2>
+    <div class="row">
+      <button id="btnPrint" class="primary">印刷する</button>
+      <button id="btnBack" class="ghost">対象選択に戻る</button>
+      <span class="hint" id="printCount"></span>
+    </div>
+    <div class="notice">
+      印刷ダイアログで <b>余白「なし」</b>、<b>倍率100%</b>、<b>「ヘッダーとフッター」をオフ</b>にしてください。
+      用紙はA4縦です。
+    </div>
+  </section>
+</div>
+
+<div class="sheets" id="sheets"></div>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/render.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

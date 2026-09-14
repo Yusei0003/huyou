@@ -20,3 +20,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 ~$*
+
+# 開発用（アプリ本体の動作には不要）
+node_modules/
