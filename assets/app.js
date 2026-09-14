@@ -43,15 +43,15 @@
   function renderStats(r) {
     var s = r.stats;
     var items = [
-      ['対象職員', s.staffWithTarget, '印刷する枚数'],
-      ['対象扶養親族', s.targetDeps, ''],
-      ['在職者', s.activeStaff, '名簿 ' + s.rosterRows + ' 行中'],
-      ['身分により除外', s.excludedByStatus, ''],
-      ['エラー', r.errors.length, ''],
-      ['警告', r.warnings.length, '']
+      ['対象職員', s.staffWithTarget, '印刷する枚数', 'accent'],
+      ['対象扶養親族', s.targetDeps, '', 'accent'],
+      ['在職者', s.activeStaff, '名簿 ' + s.rosterRows + ' 行中', ''],
+      ['身分により除外', s.excludedByStatus, '', ''],
+      ['エラー', r.errors.length, '', r.errors.length ? 'err' : ''],
+      ['警告', r.warnings.length, '', r.warnings.length ? 'warn' : '']
     ];
     $('stats').innerHTML = items.map(function (i) {
-      return '<div class="stat"><b>' + i[1] + '</b><span>' + i[0] +
+      return '<div class="stat' + (i[3] ? ' stat--' + i[3] : '') + '"><b>' + i[1] + '</b><span>' + i[0] +
              (i[2] ? '<br>' + i[2] : '') + '</span></div>';
     }).join('');
   }

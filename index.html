@@ -10,12 +10,42 @@
 
 <div id="ui">
   <header>
-    <h1>扶養親族確認調査書 印刷システム</h1>
-    <p class="sub">扶養手当／陸前高田市 総務部総務課 職員係</p>
+    <div class="brand">
+      <span class="brandMark" aria-hidden="true">扶</span>
+      <div>
+        <h1>扶養親族確認調査書 印刷システム</h1>
+        <p class="sub">扶養手当／陸前高田市 総務部総務課 職員係</p>
+      </div>
+    </div>
   </header>
 
   <section class="card">
-    <h2>１　条件とデータの読み込み</h2>
+    <h2><span class="step">1</span>条件とデータの読み込み</h2>
+
+    <details class="howto">
+      <summary>データの準備のしかた（人事システム・給与システムでの操作）</summary>
+      <div class="howtoBody">
+        <div class="howtoCol">
+          <h3><span class="dot dot1"></span>名簿データ（人事システム）</h3>
+          <ol>
+            <li>人事システムを開き、画面<b>左上の検索条件</b>で「在職」「写真無」「詳細」を選択して検索する</li>
+            <li>検索結果の一覧上で <kbd>Ctrl</kbd> + <kbd>A</kbd> を押してすべて選択する</li>
+            <li>コピーしてExcelに貼り付け、「名簿データ」として <code>.xlsx</code> で保存する</li>
+          </ol>
+        </div>
+        <div class="howtoCol">
+          <h3><span class="dot dot2"></span>扶養データ（給与システム）</h3>
+          <ol>
+            <li>給与システムを開き、<b>対象年度の6月</b>を選択する</li>
+            <li>「入力」→「ダウンロード」と進む</li>
+            <li>プルダウンから「扶養データ」を選択してダウンロードする</li>
+            <li>表示された内容を <kbd>Ctrl</kbd> + <kbd>A</kbd> で全選択してコピーし、
+              Excelに貼り付けて「扶養データ」として <code>.xlsx</code> で保存する</li>
+          </ol>
+        </div>
+      </div>
+    </details>
+
     <div class="grid">
       <label>対象年度（西暦）
         <input type="number" id="fy" min="2000" max="2100" step="1">
@@ -30,18 +60,18 @@
     </div>
     <div class="row">
       <button id="btnRun" class="primary" disabled>読み込んで抽出する</button>
-      <span class="hint">ファイルはこのPCの中だけで処理されます。外部には一切送信しません。</span>
+      <span class="hint">🔒 ファイルはこのPCの中だけで処理されます。外部には一切送信しません。</span>
     </div>
   </section>
 
   <section class="card hidden" id="secResult">
-    <h2>２　抽出結果</h2>
+    <h2><span class="step">2</span>抽出結果</h2>
     <div id="stats" class="stats"></div>
     <div id="msgs"></div>
   </section>
 
   <section class="card hidden" id="secList">
-    <h2>３　印刷対象</h2>
+    <h2><span class="step">3</span>印刷対象</h2>
     <div class="row">
       <label class="inline">所属
         <select id="filterShozoku"><option value="">すべて</option></select>
@@ -51,7 +81,7 @@
       <span class="hint" id="selCount"></span>
     </div>
     <div class="row">
-      <button id="btnCsv" class="ghost">一覧をCSV出力</button>
+      <button id="btnCsv" class="ghost">⬇ 一覧をCSV出力</button>
       <span class="hint">下の表に表示されている対象扶養親族（所属の絞り込みを反映）をCSVで書き出します。印刷のチェックとは関係ありません。</span>
     </div>
     <div class="tableWrap">
@@ -70,9 +100,9 @@
   </section>
 
   <section class="card hidden" id="secPrint">
-    <h2>４　印刷</h2>
+    <h2><span class="step">4</span>印刷</h2>
     <div class="row">
-      <button id="btnPrint" class="primary">印刷する</button>
+      <button id="btnPrint" class="primary">🖨 印刷する</button>
       <button id="btnBack" class="ghost">対象選択に戻る</button>
       <span class="hint" id="printCount"></span>
     </div>
@@ -81,6 +111,8 @@
       用紙はA4縦です。
     </div>
   </section>
+
+  <p class="footNote">陸前高田市 総務部総務課 職員係　庁内利用専用</p>
 </div>
 
 <div class="sheets" id="sheets"></div>
