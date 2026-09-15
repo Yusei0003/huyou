@@ -197,7 +197,19 @@
     $('fy').innerHTML = opts.join('');
   }
 
+  /** 画面右上・最下部にバージョンを表示する（assets/version.js が値を持つ）。
+      別のPCと見た目や動作が食い違ったとき、どちらが新しい版かを一目で確認できるようにするためのもの。 */
+  function showVersion() {
+    var v = (typeof window !== 'undefined' && window.APP_VERSION) || '不明';
+    var d = (typeof window !== 'undefined' && window.APP_VERSION_DATE) || '';
+    var badge = $('verBadge');
+    if (badge) { badge.textContent = 'Ver ' + v; badge.title = d ? d + ' 更新' : ''; }
+    var foot = $('verFoot');
+    if (foot) { foot.textContent = 'Ver ' + v + (d ? '（' + d + '）' : ''); }
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    showVersion();
     populateFyOptions();
     $('fyHint').textContent = fyHintText(parseInt($('fy').value, 10));
     $('fy').addEventListener('change', function () {
