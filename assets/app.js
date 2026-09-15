@@ -178,15 +178,30 @@
     Csv.download(csv, filename);
   }
 
+  /** 年度hintの本文（例:「令和8年度：基準日 2026/6/1、2008/4/1 以前の出生者が対象」）*/
+  function fyHintText(v) {
+    return isFinite(v)
+      ? Core.fiscalYearLabel(v) + '：基準日 ' + v + '/6/1、' + (v - 18) + '/4/1 以前の出生者が対象'
+      : '';
+  }
+
+  /** 対象年度プルダウンに選択肢を並べる（当年度を基準に前後の年度を表示。docs/spec.md 6章） */
+  function populateFyOptions() {
+    var fy0 = Core.currentFy();
+    var range = Config.fiscalYearRange || { before: 2, after: 3 };
+    var opts = [];
+    for (var y = fy0 - range.before; y <= fy0 + range.after; y++) {
+      opts.push('<option value="' + y + '"' + (y === fy0 ? ' selected' : '') + '>' +
+        Render.esc(Core.fiscalYearLabel(y)) + '（' + y + '）</option>');
+    }
+    $('fy').innerHTML = opts.join('');
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
-    var fy = Core.currentFy();
-    $('fy').value = fy;
-    $('fyHint').textContent = '令和' + (fy - 2018) + '年度：基準日 ' + fy + '/6/1、' +
-      (fy - 18) + '/4/1 以前の出生者が対象';
-    $('fy').addEventListener('input', function () {
-      var v = parseInt($('fy').value, 10);
-      $('fyHint').textContent = isFinite(v)
-        ? '令和' + (v - 2018) + '年度：基準日 ' + v + '/6/1、' + (v - 18) + '/4/1 以前の出生者が対象' : '';
+    populateFyOptions();
+    $('fyHint').textContent = fyHintText(parseInt($('fy').value, 10));
+    $('fy').addEventListener('change', function () {
+      $('fyHint').textContent = fyHintText(parseInt($('fy').value, 10));
       ready();
     });
     $('fRoster').addEventListener('change', ready);

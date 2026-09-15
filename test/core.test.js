@@ -66,6 +66,17 @@ t('currentFy は4月始まり', () => {
   assert.strictEqual(Core.currentFy(new Date(2026, 3, 1)), 2026);
 });
 
+console.log('\n[和暦年度ラベル] 対象年度プルダウン表示用');
+t('通常の年度', () => {
+  assert.strictEqual(Core.fiscalYearLabel(2026), '令和8年度');
+  assert.strictEqual(Core.fiscalYearLabel(2027), '令和9年度');
+});
+t('改元年度は「元」と表記する（4.8の様式内表記R1とは別基準）', () => {
+  assert.strictEqual(Core.fiscalYearLabel(2019), '令和元年度');
+  assert.strictEqual(Core.fiscalYearLabel(1989), '平成元年度');
+});
+t('明治より前は西暦のまま', () => assert.strictEqual(Core.fiscalYearLabel(1860), '1860年度'));
+
 console.log('\n[身分の正規化] docs/spec.md 3.4');
 t('全角/半角括弧・空白を吸収', () => {
   const k = Core.normalizeKey('パート（時間額）');

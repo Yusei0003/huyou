@@ -27,6 +27,10 @@
     /* 1枚に収まる扶養親族の上限人数。超えた職員は警告を出して印刷対象外とする。 */
     maxDependentsPerSheet: 9,
 
+    /* 対象年度プルダウンに表示する範囲。当年度を基準に「before」年度分さかのぼり、
+       「after」年度分先まで表示する（過去年度分の再印刷にも対応できるようにする）。 */
+    fiscalYearRange: { before: 2, after: 3 },
+
     /* 取り込むシート名。null なら先頭シートを使う。 */
     sheetNames: { roster: null, deps: null },
 

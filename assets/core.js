@@ -62,18 +62,25 @@
     return p.y + '-' + pad(p.m) + '-' + pad(p.d);
   }
 
-  /** Date → 和暦略記（例: 1960-03-01 → "S35.3.1"）。範囲外は null。 */
-  function formatWareki(dt) {
-    if (!(dt instanceof Date) || isNaN(dt.getTime())) return null;
-    var p = parts(dt);
+  /** dt が属する元号を返す（{sign, name, year}。年は元年=1）。範囲外（明治より前）は null。 */
+  function eraOf(dt) {
     for (var i = 0; i < ERAS.length; i++) {
       var e = ERAS[i];
       if (dt.getTime() >= ymd(e.start[0], e.start[1], e.start[2]).getTime()) {
-        // 元年も「1」と表記する（docs/spec.md 4.8）
-        return e.sign + (p.y - e.start[0] + 1) + '.' + p.m + '.' + p.d;
+        return { sign: e.sign, name: e.name, year: parts(dt).y - e.start[0] + 1 };
       }
     }
     return null;
+  }
+
+  /** Date → 和暦略記（例: 1960-03-01 → "S35.3.1"）。範囲外は null。 */
+  function formatWareki(dt) {
+    if (!(dt instanceof Date) || isNaN(dt.getTime())) return null;
+    var e = eraOf(dt);
+    if (!e) return null;
+    var p = parts(dt);
+    // 元年も「1」と表記する（docs/spec.md 4.8）
+    return e.sign + e.year + '.' + p.m + '.' + p.d;
   }
 
   /** 基準日時点の満年齢。(docs/spec.md 4.9) */
@@ -115,6 +122,18 @@
       birthLimit: ymd(fy - 18, 4, 1),                   // 生年月日上限
       heading: '扶養親族（' + p.m + '.' + p.d + '時点　扶養手当対象者）'
     };
+  }
+
+  /**
+   * 年度（西暦4桁）→ 和暦の年度表示（例: 2026 → "令和8年度"）。
+   * 年度の基準日（FY年6月1日）時点の元号で判定する（fiscalParams と同じ基準）。
+   * 元年は「元」と表記する（画面表示用。様式の日付欄は「1」表記＝4.8とは別基準）。
+   * 明治より前の年は元号を判定できないため西暦のまま返す。
+   */
+  function fiscalYearLabel(fy) {
+    var e = eraOf(ymd(fy, 6, 1));
+    if (!e) return fy + '年度';
+    return e.name + (e.year === 1 ? '元' : e.year) + '年度';
   }
 
   /** 今日の日付から年度（4月始まり）を求める */
@@ -283,6 +302,6 @@
   return {
     ERAS: ERAS, ymd: ymd, toDate: toDate, toNum: toNum, toStr: toStr,
     formatWareki: formatWareki, formatIso: formatIso, calcAge: calcAge, normalizeKey: normalizeKey,
-    fiscalParams: fiscalParams, currentFy: currentFy, extract: extract
+    fiscalParams: fiscalParams, fiscalYearLabel: fiscalYearLabel, currentFy: currentFy, extract: extract
   };
 });
