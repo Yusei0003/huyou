@@ -624,7 +624,28 @@ window.APP_VERSION_DATE = '2026-09-15';
 **新しい版を配ったつもりでも相手の手元は古いコピーのまま**という事象が実際に発生した。
 画面上の番号を見比べれば「配布物が古い」のか「同じ版でも挙動が違う」のかを切り分けられる。
 
-### 14.3 配布手順
+### 14.3 配布事故の検知（Ver 1.5.1で追加）
+
+`index.html` の末尾に**インラインの検知スクリプト**を置いている。
+外部ファイルではなくHTMLに直接書いてあるため、`assets/` が丸ごと無くても必ず動く。
+
+```js
+var cssOk = !!getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+var jsOk  = typeof Core !== 'undefined' && typeof Config !== 'undefined' && typeof XLSX !== 'undefined';
+if (cssOk && jsOk) return;   // 正常
+// → 不足しているものを列挙し、原因と対処を書いた警告画面に差し替える
+```
+
+- CSSの判定は `ui.css` が `:root` に定義する CSS変数 `--accent` の有無で行う
+- **`ui.css` から `--accent` を削除・改名すると誤検知する**ため、変更時はこの判定も直すこと
+
+**なぜ必要か**: Windowsでは ZIP をダブルクリックするとフォルダのように中身が見えるが、
+そこから `index.html` を直接開くと**その1ファイルだけが一時フォルダに取り出されて開かれる**。
+`assets/` `vendor/` が伴わないため、CSSもJSも効かないまま素朴な画面が表示される。
+一見それらしく表示され、年度プルダウンが空・セクションが全部開いている等の異常にも
+気づきにくいため、明示的に検知して止める（実際にこの事故が発生した）。
+
+### 14.4 配布手順
 
 1. `assets/version.js` の番号と日付を更新する（`package.json` も合わせる）
 2. 最新の内容でフォルダを作り直す（古いファイルが残らないようにする）

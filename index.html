@@ -125,5 +125,53 @@
 <script src="assets/render.js"></script>
 <script src="assets/csv.js"></script>
 <script src="assets/app.js"></script>
+
+<script>
+/*
+ * 配布事故の検知
+ *
+ * index.html だけが開かれ、同じフォルダにあるはずの assets/ vendor/ が読み込めていない場合、
+ * CSSもJSも効かないまま素朴な画面が表示され、しかも一見動いているように見えてしまう。
+ * （実際に「ZIPを展開せずに中の index.html を直接開く」事故が発生した）
+ *
+ * このスクリプトは外部ファイルではなくHTMLに直接書いてあるため、
+ * assets/ が丸ごと無くても必ず動く。壊れた状態を黙って表示せず、原因と対処を出す。
+ */
+(function () {
+  var cssOk = !!getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  var jsOk = typeof Core !== 'undefined' && typeof Config !== 'undefined' && typeof XLSX !== 'undefined';
+  if (cssOk && jsOk) return;
+
+  var missing = [];
+  if (!cssOk) missing.push('assets/ui.css（画面のデザイン）');
+  if (typeof Core === 'undefined' || typeof Config === 'undefined') missing.push('assets/core.js ほか（処理本体）');
+  if (typeof XLSX === 'undefined') missing.push('vendor/xlsx.full.min.js（Excel読み込み）');
+
+  document.body.innerHTML =
+    '<div style="max-width:720px;margin:48px auto;padding:28px 32px;border:2px solid #b3261e;' +
+    'border-radius:10px;background:#fceceb;font-family:\'Yu Gothic UI\',Meiryo,sans-serif;' +
+    'color:#1c2430;line-height:1.8">' +
+      '<h1 style="margin:0 0 14px;font-size:20px;color:#b3261e">' +
+        'ファイルが不足しているため、正しく動作しません</h1>' +
+      '<p style="margin:0 0 18px">' +
+        '<b>index.html だけが開かれています。</b>' +
+        'このシステムは <code>index.html</code> と同じ場所にある ' +
+        '<code>assets</code> フォルダ・<code>vendor</code> フォルダが揃っていないと動きません。</p>' +
+      '<p style="margin:0 0 8px"><b>読み込めなかったもの</b></p>' +
+      '<ul style="margin:0 0 20px"><li>' + missing.join('</li><li>') + '</li></ul>' +
+      '<p style="margin:0 0 8px"><b>よくある原因と対処</b></p>' +
+      '<ol style="margin:0 0 20px">' +
+        '<li><b>ZIPを展開せずに、ZIPの中の index.html を直接開いた</b>（最も多い原因）<br>' +
+          'ZIPファイルを右クリック →「すべて展開」→ 展開先フォルダの ' +
+          '<code>index.html</code> を開いてください。</li>' +
+        '<li><b>index.html だけをコピーした</b><br>' +
+          'フォルダごとコピーしてください。</li>' +
+      '</ol>' +
+      '<p style="margin:0;padding-top:16px;border-top:1px solid #f3c9c6;font-size:13px;color:#6b7482">' +
+        '確認方法：<code>index.html</code> と同じ場所に <code>assets</code> と <code>vendor</code> の' +
+        '2つのフォルダがあるか見てください。無ければ上記のとおり展開し直してください。</p>' +
+    '</div>';
+})();
+</script>
 </body>
 </html>

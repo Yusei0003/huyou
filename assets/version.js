@@ -6,5 +6,5 @@
  * 食い違ったときに「どちらが新しいか」を一目で確認できるようにするためのものです。
  * package.json の version も合わせて更新してください（README.md「配布のしかた」参照）。
  */
-window.APP_VERSION = '1.5.0';
-window.APP_VERSION_DATE = '2026-09-15';
+window.APP_VERSION = '1.5.1';
+window.APP_VERSION_DATE = '2026-09-16';
