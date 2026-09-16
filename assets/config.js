@@ -31,6 +31,11 @@
        「after」年度分先まで表示する（過去年度分の再印刷にも対応できるようにする）。 */
     fiscalYearRange: { before: 2, after: 3 },
 
+    /* 印刷・CSV・一覧の既定の並び順。画面のプルダウンでいつでも切り替えられる。
+         'shozoku' … 所属順（所属CD→係CD→職員番号）。所属ごとに仕分けて配布する場合
+         'number'  … 職員番号順。名簿や人事給与システムの並びと突き合わせる場合 */
+    defaultSortOrder: 'shozoku',
+
     /* 取り込むシート名。null なら先頭シートを使う。 */
     sheetNames: { roster: null, deps: null },
 

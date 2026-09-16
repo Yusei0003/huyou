@@ -142,6 +142,33 @@
     return d.getMonth() + 1 >= 4 ? d.getFullYear() : d.getFullYear() - 1;
   }
 
+  /* ===== 並び順 ===== (docs/spec.md 3.2 STEP4) */
+
+  /** 数値の比較。null/未設定は最後に送る（コード欠落の職員が先頭に来ないようにする） */
+  function cmpNum(a, b) {
+    var x = (a === null || a === undefined || isNaN(a)) ? Infinity : a;
+    var y = (b === null || b === undefined || isNaN(b)) ? Infinity : b;
+    return x < y ? -1 : x > y ? 1 : 0;
+  }
+
+  var SORT_ORDERS = {
+    /** 所属順: 所属CD → 係CD → 職員番号。所属ごとに仕分けて配布する場合に使う */
+    shozoku: function (a, b) {
+      return cmpNum(a.shozokuCd, b.shozokuCd) || cmpNum(a.kakariCd, b.kakariCd) || cmpNum(a.no, b.no);
+    },
+    /** 職員番号順: 職員番号のみ。名簿や人事給与システムの並びと突き合わせる場合に使う */
+    number: function (a, b) { return cmpNum(a.no, b.no); }
+  };
+
+  /**
+   * 調査書（職員）の並び替え。元の配列は変更せず、並び替えた新しい配列を返す。
+   * @param {Array} sheets  Core.extract() の result.sheets
+   * @param {string} order  'shozoku'（既定）または 'number'。未知の値は 'shozoku' として扱う
+   */
+  function sortSheets(sheets, order) {
+    return (sheets || []).slice().sort(SORT_ORDERS[order] || SORT_ORDERS.shozoku);
+  }
+
   /* ===== 抽出 ===== (docs/spec.md 3.2) */
 
   /**
@@ -292,9 +319,7 @@
       stats.staffWithTarget++;
     });
 
-    sheets.sort(function (a, b) {
-      return (a.shozokuCd - b.shozokuCd) || (a.kakariCd - b.kakariCd) || (a.no - b.no);
-    });
+    sheets = sortSheets(sheets, cfg.defaultSortOrder);
 
     return { sheets: sheets, errors: errors, warnings: warnings, infos: infos, stats: stats, fiscal: fp };
   }
@@ -302,6 +327,7 @@
   return {
     ERAS: ERAS, ymd: ymd, toDate: toDate, toNum: toNum, toStr: toStr,
     formatWareki: formatWareki, formatIso: formatIso, calcAge: calcAge, normalizeKey: normalizeKey,
-    fiscalParams: fiscalParams, fiscalYearLabel: fiscalYearLabel, currentFy: currentFy, extract: extract
+    fiscalParams: fiscalParams, fiscalYearLabel: fiscalYearLabel, currentFy: currentFy,
+    sortSheets: sortSheets, extract: extract
   };
 });

@@ -83,9 +83,15 @@
     drawRows();
   }
 
+  /** 画面で選ばれている並び順を適用した全件。一覧・印刷・CSVはすべてこれを通す */
+  function orderedSheets() {
+    return Core.sortSheets(state.result.sheets, $('sortOrder').value);
+  }
+
+  /** 一覧に表示中（所属の絞り込み後）。CSV出力の範囲でもある */
   function visibleSheets() {
     var f = $('filterShozoku').value;
-    return state.result.sheets.filter(function (s) { return !f || s.shozokuName === f; });
+    return orderedSheets().filter(function (s) { return !f || s.shozokuName === f; });
   }
 
   function drawRows() {
@@ -106,8 +112,9 @@
     updateCount();
   }
 
+  /** 印刷対象（チェックが入っている職員）。所属の絞り込みとは無関係 */
   function chosen() {
-    return state.result.sheets.filter(function (s) { return state.selected[s.no] !== false; });
+    return orderedSheets().filter(function (s) { return state.selected[s.no] !== false; });
   }
 
   function updateCount() {
@@ -169,12 +176,14 @@
     $('secPrint').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  /** 一覧に表示中（所属フィルタ反映後）の対象扶養親族をCSVで書き出す。印刷用チェックとは独立。 */
+  /** 一覧に表示中（所属フィルタ・並び順を反映）の対象扶養親族をCSVで書き出す。印刷用チェックとは独立。 */
   function exportCsv() {
     var list = visibleSheets();
     if (!list.length) { alert('CSVに出力する対象がありません。'); return; }
     var csv = Csv.build(list);
-    var filename = '対象扶養親族一覧_' + state.result.fiscal.fy + '年度.csv';
+    // 並び順をファイル名に入れ、所属順と職員番号順を両方保存しても上書きされないようにする
+    var order = $('sortOrder').value === 'number' ? '職員番号順' : '所属順';
+    var filename = '対象扶養親族一覧_' + state.result.fiscal.fy + '年度_' + order + '.csv';
     Csv.download(csv, filename);
   }
 
@@ -220,6 +229,17 @@
     $('fDeps').addEventListener('change', ready);
     $('btnRun').addEventListener('click', run);
     $('filterShozoku').addEventListener('change', drawRows);
+
+    // 既定の並び順を設定から反映（未設定・未知の値なら所属順のまま）
+    if (Config.defaultSortOrder === 'number') $('sortOrder').value = 'number';
+    // 並び順を変えたら一覧を引き直す。印刷プレビューは作り直しになるため閉じる
+    $('sortOrder').addEventListener('change', function () {
+      drawRows();
+      if (!$('secPrint').classList.contains('hidden')) {
+        $('sheets').innerHTML = '';
+        $('secPrint').classList.add('hidden');
+      }
+    });
 
     $('list').addEventListener('change', function (e) {
       var cb = e.target;

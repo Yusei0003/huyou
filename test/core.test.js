@@ -85,6 +85,31 @@ t('全角/半角括弧・空白を吸収', () => {
   assert.strictEqual(Core.normalizeKey('ﾊﾟｰﾄ(時間額)'), k);
 });
 
+console.log('\n[並び順] docs/spec.md 3.2 STEP4');
+const mk = (no, sc, kc) => ({ no, shozokuCd: sc, kakariCd: kc });
+t('所属順は所属CD→係CD→職員番号', () => {
+  const src = [mk(1005, 1200, 10), mk(1001, 1100, 20), mk(1009, 1100, 10), mk(1002, 1100, 20)];
+  assert.deepStrictEqual(Core.sortSheets(src, 'shozoku').map(s => s.no), [1009, 1001, 1002, 1005]);
+});
+t('職員番号順は番号のみで並ぶ', () => {
+  const src = [mk(1005, 1200, 10), mk(1001, 1100, 20), mk(1009, 1100, 10), mk(1002, 1100, 20)];
+  assert.deepStrictEqual(Core.sortSheets(src, 'number').map(s => s.no), [1001, 1002, 1005, 1009]);
+});
+t('既定・未知の値は所属順', () => {
+  const src = [mk(1005, 1200, 10), mk(1009, 1100, 10)];
+  assert.deepStrictEqual(Core.sortSheets(src).map(s => s.no), [1009, 1005]);
+  assert.deepStrictEqual(Core.sortSheets(src, 'xxx').map(s => s.no), [1009, 1005]);
+});
+t('所属CD欠落の職員は先頭ではなく末尾に送る', () => {
+  const src = [mk(1005, null, null), mk(1009, 1100, 10)];
+  assert.deepStrictEqual(Core.sortSheets(src, 'shozoku').map(s => s.no), [1009, 1005]);
+});
+t('元の配列を書き換えない', () => {
+  const src = [mk(1005, 1200, 10), mk(1001, 1100, 20)];
+  Core.sortSheets(src, 'number');
+  assert.deepStrictEqual(src.map(s => s.no), [1005, 1001]);
+});
+
 console.log('\n[抽出] docs/spec.md 3.2');
 const XLSX = require('xlsx');
 function load(path, sheet) {
@@ -98,10 +123,14 @@ const r = Core.extract({
 });
 const byNo = {}; r.sheets.forEach(s => byNo[s.no] = s);
 
-t('対象は 1000 / 1001 / 1011 の3名', () =>
-  assert.deepStrictEqual(r.sheets.map(s => s.no), [1000, 1001, 1011]));
-t('所属CD順に並ぶ', () =>
-  assert.deepStrictEqual(r.sheets.map(s => s.shozokuCd), [1000, 1000, 1300]));
+t('対象は 1000 / 1001 / 1003 / 1011 の4名', () =>
+  assert.deepStrictEqual(r.sheets.map(s => s.no).slice().sort(), [1000, 1001, 1003, 1011]));
+t('既定は所属CD順（1003は番号が若いが所属CDが最後なので末尾）', () => {
+  assert.deepStrictEqual(r.sheets.map(s => s.shozokuCd), [1000, 1000, 1300, 1700]);
+  assert.deepStrictEqual(r.sheets.map(s => s.no), [1000, 1001, 1011, 1003]);
+});
+t('職員番号順に並べ替えると所属順とは別の並びになる', () =>
+  assert.deepStrictEqual(Core.sortSheets(r.sheets, 'number').map(s => s.no), [1000, 1001, 1003, 1011]));
 t('職員番号1000は扶養2名、temp_jyun順', () =>
   assert.deepStrictEqual(byNo[1000].deps.map(d => d.name), ['志田　花子', '志田　尚子']));
 t('和暦・年齢が付く', () => {

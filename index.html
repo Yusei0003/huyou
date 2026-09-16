@@ -77,6 +77,12 @@
       <label class="inline">所属
         <select id="filterShozoku"><option value="">すべて</option></select>
       </label>
+      <label class="inline">並び順
+        <select id="sortOrder">
+          <option value="shozoku">所属順（所属→係→番号）</option>
+          <option value="number">職員番号順</option>
+        </select>
+      </label>
       <button id="btnAll" class="ghost">表示中をすべて選択</button>
       <button id="btnNone" class="ghost">表示中の選択を解除</button>
       <span class="hint" id="selCount"></span>
