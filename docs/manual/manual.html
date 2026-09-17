@@ -9,6 +9,14 @@
  * docs/manual/manual.pdf の生成元。画像は docs/manual/img/ の実画面スクリーンショット。
  * 更新したら  npm run manual  相当の手順（README 参照）で PDF を作り直すこと。
  */
+/* 日本語フォント（Noto Sans CJK JP から本文で使う文字だけを抜き出したもの）。
+ * tools/build-manual.py が fonts/ に作り直す。PDFの容量を抑えるための仕組みで、
+ * ブラウザでこのHTMLを直接開いたときは、読めなければ下の font-family に素直に落ちる。 */
+@font-face { font-family: "ManualJP"; font-weight: 400; font-display: block;
+             src: url("fonts/manual-jp-regular.woff2") format("woff2"); }
+@font-face { font-family: "ManualJP"; font-weight: 700; font-display: block;
+             src: url("fonts/manual-jp-bold.woff2") format("woff2"); }
+
 @page { size: A4 portrait; margin: 14mm 13mm; }
 
 :root {
@@ -27,7 +35,7 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans CJK JP", "IPAPGothic", sans-serif;
+  font-family: "ManualJP", "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans CJK JP", sans-serif;
   color: var(--ink);
   font-size: 9pt;
   line-height: 1.6;
@@ -274,8 +282,7 @@ code { font-family: "Consolas", "Courier New", monospace; font-size: 8pt; backgr
         <td>表の内容をExcelで開ける形で保存（確認用・記録用）。<b>印刷のチェックとは無関係</b>で、表に表示中の行がすべて出ます</td></tr>
     </table>
     <div class="caution">
-      <b>注意</b>　並び順を変えると印刷プレビューはいったん閉じます。古い並びのまま印刷しないよう、
-      <b>もう一度「印刷プレビューを作る」を押してください。</b>
+      <b>注意</b>　並び順を変えると印刷プレビューは閉じます。<b>もう一度「印刷プレビューを作る」を押してください。</b>
     </div>
   </section>
 
@@ -293,7 +300,7 @@ code { font-family: "Consolas", "Courier New", monospace; font-size: 8pt; backgr
           <tr><td class="k" style="width:34mm">ヘッダーとフッター</td><td class="strong">オフ</td></tr>
         </table>
         <div class="tip">
-          対象者が4人なら4枚、と<b>1人1枚</b>で出ます。扶養親族が9名を超える職員は1枚に収まらないため対象から外し、警告を出します（手書きで対応）。
+          <b>1人1枚</b>で出ます。扶養親族が9名を超える職員は1枚に収まらず、対象から外して警告を出します（手書きで対応）。
         </div>
       </div>
       <div class="thumb">
@@ -338,7 +345,7 @@ code { font-family: "Consolas", "Courier New", monospace; font-size: 8pt; backgr
   </section>
 
   <div class="tip">
-    <b>個人情報の取り扱い</b>　Excel・調査書・CSVには個人情報が含まれます。共有フォルダ等に残さず、使い終わったら速やかに削除してください。
+    <b>個人情報の取り扱い</b>　Excel・調査書・CSVには個人情報が含まれます。使い終わったら速やかに削除してください。
   </div>
 
   <div class="foot">

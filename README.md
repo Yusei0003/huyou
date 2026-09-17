@@ -143,7 +143,7 @@ Ver 1.5.1 以降はこの状態を検知し、原因と対処を書いた赤い�
 
 **画面を変更したら、マニュアルのスクリーンショットも作り直してください。**
 次のコマンドで、実際のアプリをテスト用ダミーデータで動かして撮り直し、PDFまで書き出します
-（開発時のみ。`pip install playwright pillow` が必要です）。
+（開発時のみ。`pip install playwright pillow fonttools` が必要です）。
 
 ```
 python3 tools/build-manual.py
@@ -151,6 +151,13 @@ python3 tools/build-manual.py
 
 版面（A4）からはみ出すと警告が出ます。文章か画像の幅を詰めて、もう一度実行してください。
 文面の編集は `docs/manual/manual.html` で行います。
+
+PDFはUSBやメールで配るため、容量を抑える処理を入れてあります（約460KB）。
+画面写真は貼る寸法に合わせて縮小し、日本語フォントは**本文で使う文字だけ**を
+`docs/manual/fonts/` に抜き出して埋め込みます。
+**本文に新しい文字を足したときは、fonttools の入った環境で作り直してください。**
+作り直せない環境では同梱のフォントを使い、足りない文字があれば警告が出ます
+（放置すると、その文字だけ別のフォントで表示されます）。
 
 ## ファイル構成
 
@@ -167,9 +174,9 @@ assets/app.js           画面制御
 vendor/xlsx.full.min.js Excel読み込み（SheetJS, Apache-2.0）
 docs/spec.md            仕様書
 docs/design.md          設計書
-docs/manual/            操作マニュアル（PDFとその生成元HTML・画面写真）
+docs/manual/            操作マニュアル（PDFとその生成元HTML・画面写真・埋め込みフォント）
 docs/mock/              様式の再現モック（レイアウト検証用）
-tools/build-manual.py   マニュアルの画面写真とPDFを作り直す（開発用）
+tools/build-manual.py   マニュアルの画面写真・フォント・PDFを作り直す（開発用）
 test/                   単体テスト（開発用）
 ```
 
