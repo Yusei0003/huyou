@@ -10,6 +10,12 @@
 out/
 *.pdf
 
+# ただし配布する操作マニュアルは追跡する
+!docs/manual/*.pdf
+
+# マニュアル用スクリーンショットの中間画像（tools/build-manual.py で再生成される）
+docs/manual/img/s*.png
+
 # Python
 __pycache__/
 *.pyc

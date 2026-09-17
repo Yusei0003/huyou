@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>扶養親族確認調査書 印刷システム 操作マニュアル</title>
+<style>
+/*
+ * 操作マニュアル（A4・2ページ）
+ * docs/manual/manual.pdf の生成元。画像は docs/manual/img/ の実画面スクリーンショット。
+ * 更新したら  npm run manual  相当の手順（README 参照）で PDF を作り直すこと。
+ */
+@page { size: A4 portrait; margin: 14mm 13mm; }
+
+:root {
+  --ink:   #1c2430;
+  --muted: #5d6675;
+  --line:  #d8dee6;
+  --accent:      #2a5fa5;
+  --accent-dark: #1f4a84;
+  --accent-soft: #eef4fc;
+  --accent-line: #c9dcf3;
+  --warn:      #a1660a;
+  --warn-soft: #fdf4e4;
+  --err:       #b3261e;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans CJK JP", "IPAPGothic", sans-serif;
+  color: var(--ink);
+  font-size: 9pt;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { width: 184mm; page-break-after: always; }
+.page:last-child { page-break-after: auto; }
+
+/* ---- 表紙ヘッダ ---- */
+.head {
+  display: flex; align-items: center; gap: 4mm;
+  border-bottom: 2.2pt solid var(--accent);
+  padding-bottom: 2.4mm; margin-bottom: 3.2mm;
+}
+.mark {
+  width: 11mm; height: 11mm; flex: none;
+  border-radius: 2.2mm; background: var(--accent); color: #fff;
+  font-size: 15pt; font-weight: 700; line-height: 11mm; text-align: center;
+}
+.head h1 { margin: 0; font-size: 15pt; letter-spacing: .02em; }
+.head .sub { margin: .4mm 0 0; font-size: 8.2pt; color: var(--muted); }
+.head .ver { margin-left: auto; text-align: right; font-size: 7.6pt; color: var(--muted); white-space: nowrap; }
+.head .ver b { display: block; font-size: 9pt; color: var(--accent-dark); }
+
+/* 2ページ目の軽いヘッダ */
+.head2 {
+  display: flex; align-items: baseline; gap: 3mm;
+  border-bottom: 1pt solid var(--accent-line);
+  padding-bottom: 1.6mm; margin-bottom: 3.4mm;
+  font-size: 8pt; color: var(--muted);
+}
+.head2 b { font-size: 10pt; color: var(--accent-dark); }
+
+/* ---- リード ---- */
+.lead {
+  display: flex; gap: 3mm; align-items: stretch;
+  margin-bottom: 3.4mm;
+}
+.lead .txt { flex: 1; }
+.lead p { margin: 0 0 1mm; }
+.lead .flow {
+  flex: none; width: 60mm; background: var(--accent-soft);
+  border: .6pt solid var(--accent-line); border-radius: 2mm;
+  padding: 2mm 2.6mm; font-size: 7.8pt; line-height: 1.5;
+}
+.lead .flow b { color: var(--accent-dark); display: block; margin-bottom: .6mm; font-size: 8.2pt; }
+.lead .flow ol { margin: 0; padding-left: 4.2mm; }
+
+/* ---- 見出し ---- */
+h2 {
+  margin: 0 0 1.6mm; font-size: 10.5pt; display: flex; align-items: center; gap: 2mm;
+}
+h2 .n {
+  width: 6.2mm; height: 6.2mm; flex: none; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 8.4pt; line-height: 6.2mm; text-align: center; font-weight: 700;
+}
+h2 .n.prep { background: #5d6675; }
+h2 .tail { margin-left: auto; font-size: 7.8pt; font-weight: 400; color: var(--muted); }
+
+section { margin-bottom: 2.6mm; }
+p { margin: 0 0 1.2mm; }
+ol, ul { margin: 0 0 1.2mm; padding-left: 4.6mm; }
+li { margin-bottom: .5mm; }
+
+/* ---- 画像 ---- */
+figure { margin: 1.4mm 0 0; }
+figure img {
+  display: block; width: 100%;
+  border: .6pt solid var(--line); border-radius: 1.4mm;
+}
+figcaption { margin-top: .8mm; font-size: 7.4pt; color: var(--muted); }
+
+/* ---- 部品 ---- */
+.tip {
+  background: var(--accent-soft); border-left: 2pt solid var(--accent);
+  padding: 1.4mm 2.4mm; margin: 1.6mm 0 0; font-size: 8.2pt;
+}
+.caution {
+  background: var(--warn-soft); border-left: 2pt solid var(--warn);
+  padding: 1.4mm 2.4mm; margin: 1.6mm 0 0; font-size: 8.2pt;
+}
+.caution b, .tip b { color: var(--accent-dark); }
+.caution b { color: var(--warn); }
+
+table { width: 100%; border-collapse: collapse; font-size: 8.2pt; }
+th, td { border: .5pt solid var(--line); padding: 1mm 1.8mm; text-align: left; vertical-align: top; }
+th { background: #f2f5f9; font-weight: 700; white-space: nowrap; }
+td.k { white-space: nowrap; width: 46mm; }
+.strong { color: var(--err); font-weight: 700; }
+table.tight { font-size: 7.8pt; }
+table.tight th, table.tight td { padding: .7mm 1.6mm; }
+
+.cols { display: flex; gap: 4mm; align-items: flex-start; }
+.cols > * { flex: 1; min-width: 0; }
+.thumb { flex: none; width: 34mm; }
+.thumb img { width: 100%; border: .6pt solid var(--line); }
+.thumb figcaption { text-align: center; }
+
+/* ---- 準備（2カラム） ---- */
+.prep { display: flex; gap: 5mm; }
+.prep > div { flex: 1; }
+.prep h3 { margin: 0 0 .6mm; font-size: 8.8pt; display: flex; align-items: center; gap: 1.6mm; }
+.prep ol { margin: 0; padding-left: 4.4mm; }
+.dot { width: 2.2mm; height: 2.2mm; border-radius: 50%; flex: none; display: inline-block; }
+.dot.d1 { background: var(--accent); }
+.dot.d2 { background: #1f7a52; }
+
+kbd {
+  border: .5pt solid #b9c2cd; border-bottom-width: 1.2pt; border-radius: .8mm;
+  padding: 0 1mm; background: #fbfcfe; font-family: inherit; font-size: 7.8pt;
+}
+code { font-family: "Consolas", "Courier New", monospace; font-size: 8pt; background: #f2f5f9; padding: 0 .8mm; border-radius: .6mm; }
+
+.foot {
+  margin-top: 2.5mm; padding-top: 1.6mm; border-top: .5pt solid var(--line);
+  font-size: 7.2pt; color: var(--muted); display: flex;
+}
+.foot .r { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<!-- ===================== 1ページ目 ===================== -->
+<div class="page">
+
+  <div class="head">
+    <div class="mark">扶</div>
+    <div>
+      <h1>扶養親族確認調査書 印刷システム　操作マニュアル</h1>
+      <p class="sub">扶養手当／陸前高田市 総務部総務課 職員係　庁内利用専用</p>
+    </div>
+    <div class="ver">対応バージョン<b>Ver 1.6.0</b></div>
+  </div>
+
+  <div class="lead">
+    <div class="txt">
+      <p>人事システムの<b>名簿データ</b>と給与システムの<b>扶養データ</b>を読み込ませると、
+        扶養手当の対象になる職員を自動で抽出し、職員ごとに1枚ずつ「扶養親族確認調査書」を
+        印刷できます。氏名・生年月日・年齢は印字済みです。</p>
+      <p><b>インストールは不要。</b>フォルダ内の <code>index.html</code> をダブルクリックして
+        Microsoft Edge で開くだけです。読み込んだExcelはこのPCの中だけで処理し、外部に送信しません。</p>
+    </div>
+    <div class="flow">
+      <b>全体の流れ（約5分）</b>
+      <ol>
+        <li>2つのExcelを用意する</li>
+        <li>年度とファイルを選んで抽出</li>
+        <li>エラー・警告を確認する</li>
+        <li>並び順を選んで印刷する</li>
+      </ol>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="n prep">準</span>はじめに2つのExcelを用意する
+      <span class="tail">アプリの「データの準備のしかた」にも同じ手順があります</span></h2>
+    <div class="prep">
+      <div>
+        <h3><span class="dot d1"></span>名簿データ（人事システム）</h3>
+        <ol>
+          <li><b>左上の検索条件</b>で「在職」「写真無」「詳細」を選び検索</li>
+          <li>一覧上で <kbd>Ctrl</kbd>+<kbd>A</kbd> → コピー</li>
+          <li>Excelに貼り付け、<code>.xlsx</code> で保存</li>
+        </ol>
+      </div>
+      <div>
+        <h3><span class="dot d2"></span>扶養データ（給与システム）</h3>
+        <ol>
+          <li><b>対象年度の6月</b>→「入力」→「ダウンロード」</li>
+          <li>プルダウンで「扶養データ」を選びダウンロード</li>
+          <li><kbd>Ctrl</kbd>+<kbd>A</kbd> → コピー → Excelに貼り付け、<code>.xlsx</code> で保存</li>
+        </ol>
+      </div>
+    </div>
+    <div class="caution">
+      <b>ポイント</b>　<b>見出し行（1行目）を消さないでください。</b>
+      列名を手がかりに読み取るため、見出しが無いと読み込めません。
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">1</span>年度と2つのファイルを選んで、抽出する</h2>
+    <p><b>対象年度</b>を選び（通常は今年度のまま）、<b>名簿データ</b>と<b>扶養データ</b>の
+      <code>.xlsx</code> を選んでから、<b>「読み込んで抽出する」</b>を押します。
+      3つがそろうまでボタンは押せません。</p>
+    <figure>
+      <img src="img/c-load.png" alt="条件とデータの読み込み画面" style="width:150mm">
+      <figcaption>年度を選ぶと、その年度の基準日と生年月日の上限が下に出ます（令和8年度＝基準日 2026/6/1、2008/4/1 以前に生まれた親族が対象）。</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>抽出結果を確認する<span class="tail">ここを飛ばさないこと</span></h2>
+    <figure>
+      <img src="img/c-result.png" alt="抽出結果の画面" style="width:146mm">
+    </figure>
+    <table class="tight" style="margin-top:1.4mm">
+      <tr><th style="width:26mm">表示</th><th>意味とすること</th></tr>
+      <tr>
+        <td class="k" style="width:26mm"><span class="strong">エラー</span>（赤）</td>
+        <td>生年月日が読めないなど、データが壊れている。<b>その行は印刷されません。</b>元データを直すか、手書きで補ってください</td>
+      </tr>
+      <tr>
+        <td class="k" style="width:26mm;color:#a1660a;font-weight:700">警告（黄）</td>
+        <td>印刷対象外にした人、重複している人など。内容を読み、対象外で良いか確認してください（赤い枠の下に黄色で表示されます）</td>
+      </tr>
+      <tr>
+        <td class="k" style="width:26mm;color:#2a5fa5;font-weight:700">お知らせ（青）</td>
+        <td>設定に無い身分を、念のため対象に含めた。対象外にすべき身分なら担当者に設定変更を依頼してください</td>
+      </tr>
+    </table>
+  </section>
+
+  <div class="foot">
+    <span>陸前高田市 総務部総務課 職員係</span>
+    <span class="r">1 / 2</span>
+  </div>
+</div>
+
+<!-- ===================== 2ページ目 ===================== -->
+<div class="page">
+
+  <div class="head2">
+    <b>扶養親族確認調査書 印刷システム　操作マニュアル</b>
+    <span>Ver 1.6.0</span>
+  </div>
+
+  <section>
+    <h2><span class="n">3</span>並び順と印刷する人を選ぶ</h2>
+    <figure>
+      <img src="img/c-list.png" alt="印刷対象の画面" style="width:130mm">
+    </figure>
+    <table class="tight" style="margin-top:1.4mm">
+      <tr><th style="width:30mm">操作</th><th>内容</th></tr>
+      <tr><td class="k" style="width:30mm">所属</td>
+        <td>特定の課だけを表示・印刷したいときに選びます</td></tr>
+      <tr><td class="k" style="width:30mm">並び順</td>
+        <td><b>所属順</b>＝所属ごとに仕分けて配るとき。<b>職員番号順</b>＝名簿やシステムと突き合わせるとき。一覧・印刷・CSVすべてに同じ並びが反映されます</td></tr>
+      <tr><td class="k" style="width:30mm">チェックボックス</td>
+        <td>外した人は印刷されません（既定は全員オン）</td></tr>
+      <tr><td class="k" style="width:30mm">一覧をCSV出力</td>
+        <td>表の内容をExcelで開ける形で保存（確認用・記録用）。<b>印刷のチェックとは無関係</b>で、表に表示中の行がすべて出ます</td></tr>
+    </table>
+    <div class="caution">
+      <b>注意</b>　並び順を変えると印刷プレビューはいったん閉じます。古い並びのまま印刷しないよう、
+      <b>もう一度「印刷プレビューを作る」を押してください。</b>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>印刷する<span class="tail">印刷ダイアログの設定が最重要です</span></h2>
+    <div class="cols">
+      <div>
+        <p>「印刷プレビューを作る」→「<b>🖨 印刷する</b>」でブラウザの印刷ダイアログが開きます。
+          <b>下の4項目を必ず設定してください。</b>既定のままだと枠線がずれ、日付やページ番号が余計に印刷されます。</p>
+        <table class="tight" style="margin-top:1.2mm">
+          <tr><th>項目</th><th>設定</th></tr>
+          <tr><td class="k" style="width:34mm">用紙</td><td>A4・縦</td></tr>
+          <tr><td class="k" style="width:34mm">余白</td><td class="strong">なし</td></tr>
+          <tr><td class="k" style="width:34mm">倍率</td><td><span class="strong">100%</span>（「ページに合わせる」にしない）</td></tr>
+          <tr><td class="k" style="width:34mm">ヘッダーとフッター</td><td class="strong">オフ</td></tr>
+        </table>
+        <div class="tip">
+          対象者が4人なら4枚、と<b>1人1枚</b>で出ます。扶養親族が9名を超える職員は1枚に収まらないため対象から外し、警告を出します（手書きで対応）。
+        </div>
+      </div>
+      <div class="thumb">
+        <figure>
+          <img src="img/c-sheet.png" alt="印刷される調査書">
+          <figcaption>印刷される調査書（上部）</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n prep">？</span>困ったときは</h2>
+    <table class="tight">
+      <tr><th style="width:52mm">こうなったら</th><th>原因と対処</th></tr>
+      <tr>
+        <td>デザインが崩れ、年度のプルダウンが空</td>
+        <td><b>ZIPを展開せずに中の <code>index.html</code> を直接開いています。</b>
+          ZIPを右クリック →「すべて展開」→ 展開先の <code>index.html</code> を開き直してください</td>
+      </tr>
+      <tr>
+        <td>「読み込んで抽出する」が押せない</td>
+        <td>年度・名簿データ・扶養データの3つがそろっていません。ファイル名が表示されているか確認</td>
+      </tr>
+      <tr>
+        <td>「必要な列がありません」と出る</td>
+        <td>見出し行が消えている、または別のデータです。準備の手順からやり直してください</td>
+      </tr>
+      <tr>
+        <td>対象者が思ったより少ない</td>
+        <td>次を<b>すべて</b>満たす人だけが対象です。在職／身分が「パート（時間額）（日額）」でない／扶養手当の対象（手当月額が0円でない）／<b>その年度の6月</b>のデータ／生年月日が画面表示の上限以前</td>
+      </tr>
+      <tr>
+        <td>印刷すると枠がずれる・2枚に分かれる</td>
+        <td>印刷ダイアログの設定です。<b>余白「なし」・倍率100%・ヘッダーとフッターをオフ</b>を確認</td>
+      </tr>
+      <tr>
+        <td>画面の見た目や動きが人と違う</td>
+        <td>配布版が古い可能性。右上のバージョン番号を見比べ、<kbd>Ctrl</kbd>+<kbd>F5</kbd> でも変わらなければ最新のZIPを配り直してもらう</td>
+      </tr>
+    </table>
+  </section>
+
+  <div class="tip">
+    <b>個人情報の取り扱い</b>　Excel・調査書・CSVには個人情報が含まれます。共有フォルダ等に残さず、使い終わったら速やかに削除してください。
+  </div>
+
+  <div class="foot">
+    <span>詳しい仕様は <code>docs/spec.md</code>、設定の変更は <code>README.md</code> を参照してください。</span>
+    <span class="r">2 / 2</span>
+  </div>
+</div>
+
+</body>
+</html>
