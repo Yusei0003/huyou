@@ -123,6 +123,19 @@ header .sub { margin: 0; color: var(--muted); font-size: 13px; }
   border: 1px solid var(--line); font-size: 12px;
 }
 
+/* 取得元の常時表示（ファイル選択欄の直下） */
+.src {
+  display: block; margin-top: 6px; font-size: 12px; font-weight: 400;
+  line-height: 1.6; color: var(--muted);
+}
+.src .dot { display: inline-block; margin-right: 6px; vertical-align: middle; }
+.src b { color: var(--accent-dark); font-weight: 700; }
+.src kbd {
+  display: inline-block; padding: 0 5px; margin: 0 1px;
+  border: 1px solid #c3cad4; border-bottom-width: 2px; border-radius: 4px;
+  background: #fff; font: 11px/1.6 inherit; color: var(--ink);
+}
+
 /* ===== フォーム部品 ===== */
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
 label { display: block; font-size: 13px; font-weight: 700; color: #333c48; }
