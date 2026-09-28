@@ -1,0 +1,49 @@
+/* 案2「霞（かすみ）」— ミニマル。白地・ヘアライン・影なし。余白と文字組みで見せる */
+:root {
+  --ink: #16181d; --muted: #767b85; --faint: #a6abb3;
+  --line: #e8e9ec; --bg: #ffffff; --panel: #ffffff; --panel2: #fafafb;
+  --accent: #2f3640; --accent-dark: #16181d; --accent-soft: #f2f3f5; --accent-line: #dcdee2;
+  --warn: #8a6a12; --warn-soft: #fbf6ea; --err: #a32b23; --err-soft: #fbeeed;
+  --radius: 0px;
+  --shadow: none;
+}
+body { background: var(--bg); font-size: 14px; }
+#ui { max-width: 900px; padding: 56px 20px 80px; }
+header { margin-bottom: 40px; }
+.brandMark {
+  width: 38px; height: 38px; border-radius: 0; background: var(--ink);
+  box-shadow: none; font-size: 15px; font-weight: 400;
+}
+header h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.verBadge { border-radius: 0; background: transparent; border: 0; color: var(--faint); }
+.card {
+  border: 0; border-top: 1px solid var(--line); border-radius: 0;
+  box-shadow: none; padding: 30px 0 34px; margin-bottom: 0;
+}
+.card h2 { border-bottom: 0; padding-bottom: 0; margin-bottom: 22px; font-size: 16px; }
+.step {
+  border-radius: 0; background: transparent; border: 0; color: var(--faint);
+  font-size: 12px; width: auto; height: auto; font-weight: 700; letter-spacing: .12em;
+}
+.step::after { content: "."; }
+button { border-radius: 2px; font-weight: 700; }
+button.primary { background: var(--ink); box-shadow: none; }
+button.primary:hover { background: #33383f; }
+button.ghost { border-color: var(--line); }
+input[type=number], input[type=file], select {
+  border: 0; border-bottom: 1px solid #c9ccd2; border-radius: 0; padding-left: 0; background: transparent;
+}
+input[type=number]:focus, select:focus { box-shadow: none; border-bottom-color: var(--ink); }
+input[type=file]::file-selector-button { border-radius: 2px; background: var(--accent-soft); color: var(--ink); }
+.stat {
+  border: 0; border-left: 2px solid var(--line); border-radius: 0;
+  background: transparent; padding: 6px 0 6px 14px;
+}
+.stat b { font-size: 24px; font-weight: 700; }
+.stat--accent { background: transparent; border-left-color: var(--ink); }
+.stat--accent b { color: var(--ink); }
+.msg { border-radius: 2px; }
+.howto { border-radius: 2px; background: var(--panel2); border-color: var(--line); }
+.tableWrap { border-radius: 0; border-left: 0; border-right: 0; }
+#list thead th { background: transparent; border-bottom: 1px solid var(--ink); color: var(--ink); }
+.notice { border-radius: 2px; }

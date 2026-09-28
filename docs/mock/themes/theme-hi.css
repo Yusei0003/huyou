@@ -1,0 +1,37 @@
+/* 案5「陽（ひ）」— やわらかい。角を大きく丸め、淡い影と暖色でとっつきやすくする */
+:root {
+  --ink: #2b2b33; --muted: #77737f; --faint: #a49fae;
+  --line: #ece7f0; --bg: #f7f4fb; --panel: #ffffff; --panel2: #faf7fd;
+  --accent: #6a5acd; --accent-dark: #54459f; --accent-soft: #f0ecfc; --accent-line: #d9d0f5;
+  --warn: #b5751a; --warn-soft: #fdf3e4; --err: #c2453c; --err-soft: #fdeeed;
+  --radius: 20px;
+  --shadow: 0 2px 4px rgba(90,70,150,.05), 0 14px 32px -16px rgba(90,70,150,.28);
+}
+body {
+  background:
+    radial-gradient(760px 340px at 88% -8%, #fce9f2 0%, transparent 62%),
+    radial-gradient(900px 380px at 4% -10%, #e9f0fd 0%, transparent 60%),
+    var(--bg);
+}
+.brandMark {
+  width: 48px; height: 48px; border-radius: 16px;
+  background: linear-gradient(150deg, #8b7ce8, var(--accent-dark));
+  box-shadow: 0 10px 22px -8px rgba(106,90,205,.55);
+}
+header h1 { font-size: 22px; }
+.verBadge { background: #fff; border-color: var(--accent-line); color: var(--accent-dark); }
+.card { padding: 28px 30px; }
+.card h2 { font-size: 16px; }
+.step {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(150deg, #8b7ce8, var(--accent)); color: #fff; border-color: transparent;
+}
+button { border-radius: 999px; padding: 11px 24px; }
+button.primary { box-shadow: 0 4px 14px -4px rgba(106,90,205,.6); }
+input[type=number], input[type=file], select { border-radius: 14px; border-color: #ddd6e6; }
+input[type=file]::file-selector-button { border-radius: 999px; padding: 7px 16px; }
+.stat { border-radius: 16px; border-left-width: 5px; }
+.stat b { font-size: 23px; }
+.msg, .notice, .howto { border-radius: 16px; }
+.tableWrap { border-radius: 16px; }
+#list tbody tr:hover { background: #faf7fd; }

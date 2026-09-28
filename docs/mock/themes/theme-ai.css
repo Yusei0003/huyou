@@ -1,0 +1,35 @@
+/* 案1「藍（あい）」— 和モダン。生成りの紙にインクを落とした趣。影を使わず罫線で構成する */
+:root {
+  --ink: #1b2430; --muted: #6a7280; --faint: #9aa1ab;
+  --line: #e0dbd0; --bg: #f4f1e9; --panel: #fffdf8; --panel2: #f7f4ec;
+  --accent: #1f4e79; --accent-dark: #15364f; --accent-soft: #eaf0f5; --accent-line: #c2d2de;
+  --warn: #8a6410; --warn-soft: #f8efdb; --err: #9e2b22; --err-soft: #f7e8e6;
+  --radius: 4px;
+  --shadow: none;
+}
+body { background: var(--bg); }
+#ui { max-width: 940px; }
+.brandMark {
+  border-radius: 3px; background: var(--accent); box-shadow: none;
+  font-weight: 400; font-size: 20px; letter-spacing: .1em;
+}
+header h1 { font-weight: 700; letter-spacing: .04em; }
+header { padding-bottom: 18px; border-bottom: 2px solid var(--accent); }
+.verBadge { border-radius: 3px; background: transparent; border-color: var(--line); }
+.card { border-color: var(--line); box-shadow: none; }
+.card h2 { border-bottom: 1px solid var(--line); letter-spacing: .06em; }
+.step {
+  border-radius: 2px; background: var(--accent); color: #fffdf8;
+  border-color: var(--accent); font-weight: 400;
+}
+button { border-radius: 3px; letter-spacing: .08em; }
+button.primary { background: var(--accent); box-shadow: none; }
+button.primary:hover { background: var(--accent-dark); }
+button.ghost { background: var(--panel); border-color: var(--line); }
+input[type=number], input[type=file], select { border-radius: 3px; border-color: #d3cec2; background: var(--panel); }
+input[type=file]::file-selector-button { border-radius: 2px; }
+.stat { border-radius: 3px; border-left-width: 3px; }
+.stat b { font-weight: 700; }
+.msg, .notice, .tableWrap, .howto { border-radius: 3px; }
+.howto { background: var(--panel2); border-color: var(--line); }
+#list thead th { background: var(--panel2); letter-spacing: .04em; }

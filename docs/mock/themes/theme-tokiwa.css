@@ -1,0 +1,28 @@
+/* 案3「常磐（ときわ）」— 深緑＋ウォームグレー。カード上端の色帯で章立てを示す */
+:root {
+  --ink: #1e2a26; --muted: #66756f; --faint: #98a5a0;
+  --line: #e2e7e4; --bg: #f1f4f2; --panel: #ffffff; --panel2: #f6f9f7;
+  --accent: #1f7a5c; --accent-dark: #14503c; --accent-soft: #e7f2ed; --accent-line: #bcdbcd;
+  --warn: #8f6412; --warn-soft: #fbf3e2; --err: #a52f25; --err-soft: #f9ebe9;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(20,60,45,.05), 0 10px 26px -16px rgba(20,60,45,.30);
+}
+body { background: radial-gradient(1000px 420px at 85% -10%, #e7f2ed 0%, transparent 60%), var(--bg); }
+.brandMark {
+  border-radius: 14px; background: linear-gradient(150deg, #2b9a74, var(--accent-dark));
+  box-shadow: 0 8px 18px -8px rgba(31,122,92,.6);
+}
+header h1 { letter-spacing: .015em; }
+.card { position: relative; overflow: hidden; }
+.card::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), #6fc3a3);
+}
+.card h2 { padding-top: 4px; }
+.step { background: var(--accent); color: #fff; border-color: var(--accent); }
+button { border-radius: 10px; }
+button.primary { box-shadow: 0 3px 10px -3px rgba(31,122,92,.6); }
+input[type=number], input[type=file], select { border-radius: 10px; }
+.stat { border-radius: 12px; }
+.msg, .notice, .tableWrap, .howto { border-radius: 12px; }
+#list tbody tr:hover { background: #f2f9f6; }
