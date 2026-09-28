@@ -13,14 +13,26 @@
 
 ## 試しかた
 
-`index.html` の `assets/ui.css` の**次の行**に、試したい案を1行足します。
+フォルダの中にある**お試し用のファイルを開くだけ**です。編集は要りません。
+
+```
+お試し-1藍.html      お試し-2霞.html      お試し-3常磐.html
+お試し-4宵.html      お試し-5陽.html
+```
+
+中身は `index.html` と同じで、見た目の差分を1行足してあるだけです。
+実際にExcelを読み込ませて、いつもの操作をしながら見比べられます。
+
+**選び終えたら、お試し用のファイルは削除してください。**
+配布用ZIPに混ざると、どれが本物か分からなくなります。
+
+（自分で試す場合は、`index.html` の `assets/ui.css` の次の行に1行足します。
+消せば元に戻ります。）
 
 ```html
 <link rel="stylesheet" href="assets/ui.css">
-<link rel="stylesheet" href="docs/mock/themes/theme-ai.css">   <!-- この1行を足す -->
+<link rel="stylesheet" href="docs/mock/themes/theme-ai.css">
 ```
-
-元に戻すときは、足した1行を消してください。
 
 ## 採用が決まったら
 
