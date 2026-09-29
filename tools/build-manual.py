@@ -45,9 +45,9 @@ DPI = 150
 # 4mm の余裕を見て警告する。
 LIMIT_MM = 265
 IMAGES = {
-    "c-load.png":   {"src": "s1-load.png",   "crop": None, "mm": 140},
+    "c-load.png":   {"src": "s1-load.png",   "crop": None, "mm": 128},
     "c-result.png": {"src": "s3-result.png", "crop": 578,  "mm": 146},  # 統計タイル＋エラー欄まで
-    "c-list.png":   {"src": "s4-list.png",   "crop": 674,  "mm": 130},  # 操作行＋一覧の2行目まで
+    "c-list.png":   {"src": "s4-list.png",   "crop": 674,  "mm": 124},  # 操作行＋一覧の2行目まで
     "c-sheet.png":  {"src": "s6-sheet.png",  "crop": 1400, "mm": 34},   # 調査書の記入部分のみ
 }
 

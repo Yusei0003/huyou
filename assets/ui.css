@@ -1,28 +1,29 @@
-/* 画面スタイル — 印刷される調査書本体(form.css)とは独立 */
+/* 画面スタイル — 印刷される調査書本体(form.css)とは独立。配色は「藍（あい）」（docs/mock/themes/README.md 参照） */
 
 :root {
-  --ink:      #1c2430;
-  --muted:    #6b7482;
-  --faint:    #98a2b0;
-  --line:     #e3e7ec;
-  --bg:       #eef1f6;
-  --panel:    #ffffff;
-  --panel2:   #f7f9fc;
+  /* 配色「藍（あい）」。生成りの紙にインクを落とした趣で、影を使わず罫線で構成する */
+  --ink:      #1b2430;
+  --muted:    #6a7280;
+  --faint:    #9aa1ab;
+  --line:     #e0dbd0;
+  --bg:       #f4f1e9;
+  --panel:    #fffdf8;
+  --panel2:   #f7f4ec;
 
-  --accent:      #2a5fa5;
-  --accent-dark: #1f4a84;
-  --accent-soft: #eaf1fb;
-  --accent-line: #c9dcf3;
+  --accent:      #1f4e79;
+  --accent-dark: #15364f;
+  --accent-soft: #eaf0f5;
+  --accent-line: #c2d2de;
 
   --ok:      #1f7a52;
   --ok-soft: #e8f6ef;
-  --warn:      #a1660a;
-  --warn-soft: #fdf3e2;
-  --err:      #b3261e;
-  --err-soft: #fceceb;
+  --warn:      #8a6410;
+  --warn-soft: #f8efdb;
+  --err:      #9e2b22;
+  --err-soft: #f7e8e6;
 
-  --radius: 12px;
-  --shadow: 0 1px 2px rgba(23, 32, 46, .04), 0 8px 24px -12px rgba(23, 32, 46, .14);
+  --radius: 4px;
+  --shadow: none;
 }
 
 * { box-sizing: border-box; }
@@ -38,27 +39,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#ui { max-width: 980px; margin: 0 auto; padding: 36px 20px 72px; }
+#ui { max-width: 940px; margin: 0 auto; padding: 36px 20px 72px; }
 
 /* ===== ヘッダー ===== */
-header { margin-bottom: 24px; }
+header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 2px solid var(--accent); }
 .brand { display: flex; align-items: center; gap: 14px; }
 .brandMark {
-  flex: none; width: 44px; height: 44px; border-radius: 11px;
+  flex: none; width: 44px; height: 44px; border-radius: 3px;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(155deg, var(--accent), var(--accent-dark));
-  color: #fff; font-weight: 700; font-size: 18px;
-  box-shadow: 0 6px 16px -6px rgba(42, 95, 165, .55);
+  background: var(--accent);
+  color: #fff; font-weight: 400; font-size: 20px; letter-spacing: .1em;
+  box-shadow: none;
 }
-header h1 { font-size: 21px; margin: 0 0 3px; letter-spacing: .01em; }
+header h1 { font-size: 21px; font-weight: 700; margin: 0 0 3px; letter-spacing: .04em; }
 header .sub { margin: 0; color: var(--muted); font-size: 13px; }
 
 /* バージョン表示。別PC間で見た目・動作が食い違ったとき、どちらが新しいかを一目で確認するためのもの */
 .verBadge {
   margin-left: auto; flex: none;
   font-size: 11.5px; font-weight: 700; color: var(--muted);
-  background: var(--panel2); border: 1px solid var(--line);
-  padding: 5px 12px; border-radius: 999px; white-space: nowrap; cursor: default;
+  background: transparent; border: 1px solid var(--line);
+  padding: 5px 12px; border-radius: 3px; white-space: nowrap; cursor: default;
 }
 
 /* ===== カード ===== */
@@ -76,20 +77,21 @@ header .sub { margin: 0; color: var(--muted); font-size: 13px; }
   margin: 0 0 18px; padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
   color: var(--ink);
+  letter-spacing: .06em;
 }
 .step {
-  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  flex: none; width: 26px; height: 26px; border-radius: 2px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--accent-soft); color: var(--accent-dark);
-  font-size: 13px; font-weight: 700;
-  border: 1px solid var(--accent-line);
+  background: var(--accent); color: #fffdf8;
+  font-size: 13px; font-weight: 400;
+  border: 1px solid var(--accent);
 }
 .hidden { display: none; }
 
 /* ===== データ準備のヒント（details/summary） ===== */
 .howto {
-  margin-bottom: 20px; border: 1px solid var(--accent-line); border-radius: 10px;
-  background: var(--accent-soft); overflow: hidden;
+  margin-bottom: 20px; border: 1px solid var(--line); border-radius: 3px;
+  background: var(--panel2); overflow: hidden;
 }
 .howto summary {
   cursor: pointer; list-style: none; padding: 12px 16px;
@@ -143,8 +145,8 @@ label.inline { display: inline-flex; align-items: center; gap: 8px; margin-right
 
 input[type=number], input[type=file], select {
   display: block; width: 100%; margin-top: 7px; padding: 9px 11px;
-  border: 1px solid #cbd2db; border-radius: 8px;
-  font: inherit; font-weight: 400; color: var(--ink); background: #fff;
+  border: 1px solid #d3cec2; border-radius: 3px;
+  font: inherit; font-weight: 400; color: var(--ink); background: var(--panel);
   transition: border-color .15s ease, box-shadow .15s ease;
 }
 input[type=number]:hover, select:hover { border-color: #a9b3c0; }
@@ -155,7 +157,7 @@ input[type=number]:focus, select:focus {
 label.inline select { display: inline-block; width: auto; margin-top: 0; }
 
 input[type=file]::file-selector-button {
-  padding: 7px 13px; margin-right: 10px; border: 0; border-radius: 6px;
+  padding: 7px 13px; margin-right: 10px; border: 0; border-radius: 2px;
   background: var(--accent-soft); color: var(--accent-dark); font: inherit; font-weight: 700;
   cursor: pointer; transition: background .15s ease;
 }
@@ -166,33 +168,33 @@ input[type=file]::file-selector-button:hover { background: var(--accent-line); }
 /* ===== ボタン ===== */
 .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
 button {
-  font: inherit; font-weight: 700; padding: 10px 20px; border-radius: 8px;
-  cursor: pointer; border: 1px solid transparent; letter-spacing: .01em;
+  font: inherit; font-weight: 700; padding: 10px 20px; border-radius: 3px;
+  cursor: pointer; border: 1px solid transparent; letter-spacing: .08em;
   transition: background .15s ease, border-color .15s ease, transform .05s ease, box-shadow .15s ease;
 }
 button:active { transform: translateY(1px); }
 
 button.primary {
-  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
-  color: #fff; box-shadow: 0 2px 8px -2px rgba(42, 95, 165, .55);
+  background: var(--accent);
+  color: #fff; box-shadow: none;
 }
-button.primary:hover { background: linear-gradient(180deg, #3268ac, var(--accent-dark)); }
+button.primary:hover { background: var(--accent-dark); }
 button.primary:disabled {
   background: #c3cbd6; color: #eef1f5; box-shadow: none; cursor: not-allowed;
 }
 
 button.ghost {
-  background: #fff; border-color: #cbd2db; color: #333c48;
+  background: var(--panel); border-color: var(--line); color: #333c48;
 }
 button.ghost:hover { background: var(--panel2); border-color: #a9b3c0; }
 
 /* ===== 抽出結果の統計タイル ===== */
 .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
 .stat {
-  flex: 1 1 130px; border-radius: 10px; padding: 12px 16px;
-  background: var(--panel2); border: 1px solid var(--line); border-left: 4px solid var(--faint);
+  flex: 1 1 130px; border-radius: 3px; padding: 12px 16px;
+  background: var(--panel2); border: 1px solid var(--line); border-left: 3px solid var(--faint);
 }
-.stat b { display: block; font-size: 21px; line-height: 1.25; font-weight: 800; }
+.stat b { display: block; font-size: 21px; line-height: 1.25; font-weight: 700; }
 .stat span { font-size: 11.5px; color: var(--muted); }
 .stat--accent { background: var(--accent-soft); border-left-color: var(--accent); }
 .stat--accent b { color: var(--accent-dark); }
@@ -203,7 +205,7 @@ button.ghost:hover { background: var(--panel2); border-color: #a9b3c0; }
 
 /* ===== メッセージ（エラー・警告・お知らせ） ===== */
 .msg {
-  position: relative; border-radius: 9px; padding: 13px 16px 13px 42px;
+  position: relative; border-radius: 3px; padding: 13px 16px 13px 42px;
   margin-top: 12px; font-size: 13px; background: var(--panel2); border: 1px solid var(--line);
 }
 .msg::before {
@@ -222,12 +224,13 @@ button.ghost:hover { background: var(--panel2); border-color: #a9b3c0; }
 /* ===== 一覧テーブル ===== */
 .tableWrap {
   overflow-x: auto; margin-top: 14px; border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
 }
 #list { border-collapse: collapse; width: 100%; font-size: 13px; }
 #list th, #list td { padding: 9px 12px; text-align: left; vertical-align: top; }
 #list thead th {
   background: var(--panel2); color: #4a5361; font-weight: 700; font-size: 12px;
+  letter-spacing: .04em;
   white-space: nowrap; position: sticky; top: 0; border-bottom: 1px solid var(--line);
 }
 #list tbody tr { border-top: 1px solid var(--line); transition: background .1s ease; }
@@ -239,7 +242,7 @@ button.ghost:hover { background: var(--panel2); border-color: #a9b3c0; }
 /* ===== 印刷時の注意書き ===== */
 .notice {
   margin-top: 14px; background: var(--warn-soft); border: 1px solid #f2dcab;
-  border-radius: 9px; padding: 12px 16px; font-size: 13px; color: #5c4108;
+  border-radius: 3px; padding: 12px 16px; font-size: 13px; color: #5c4108;
 }
 
 .footNote { text-align: center; color: var(--faint); font-size: 12px; margin-top: 28px; }

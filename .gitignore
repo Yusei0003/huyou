@@ -33,5 +33,3 @@ Thumbs.db
 # 開発用（アプリ本体の動作には不要）
 node_modules/
 
-# 見本画像は tools/preview-themes.py で作り直せるので追跡しない
-docs/mock/themes/preview/
