@@ -1,5 +1,8 @@
 /* 単体テスト（開発用）: node test/core.test.js */
 'use strict';
+// 利用者のPCと同じ日本時間で動かす。UTCのままだと、ローカル時刻に依存する不具合が
+// 再現しない（夏時間の開始日で生年月日が1日ずれる問題は、UTCのテストでは見逃していた）
+process.env.TZ = 'Asia/Tokyo';
 const assert = require('assert');
 const Core = require('../assets/core.js');
 const Config = require('../assets/config.js');
@@ -10,6 +13,9 @@ function t(name, fn) {
   catch (e) { console.error('  FAIL ' + name + '\n       ' + e.message); process.exitCode = 1; }
 }
 const D = Core.ymd;
+
+console.log('\n[実行環境]');
+t('日本時間で実行されている（UTC+9）', () => assert.strictEqual(new Date(2026, 0, 1).getTimezoneOffset(), -540));
 
 console.log('\n[日付の正規化] docs/spec.md 5.4');
 t('Excelシリアル値（名簿）', () => {
@@ -113,7 +119,7 @@ t('元の配列を書き換えない', () => {
 console.log('\n[抽出] docs/spec.md 3.2');
 const XLSX = require('xlsx');
 function load(path, sheet) {
-  const wb = XLSX.readFile(path, { cellDates: true });
+  const wb = XLSX.readFile(path, Core.XLSX_READ_OPTIONS);   // アプリと同じ読み込み設定
   return XLSX.utils.sheet_to_json(wb.Sheets[sheet || wb.SheetNames[0]], { defval: null, raw: true });
 }
 const r = Core.extract({
@@ -167,6 +173,17 @@ t('birthday欠損はエラー', () =>
 t('同名・同生年月日の重複は警告（集約しない）', () => {
   assert.strictEqual(byNo[1001].deps.length, 2);
   assert.ok(r.warnings.some(m => /重複/.test(m.msg)));
+});
+
+console.log('\n[Excelの日付の読み込み] docs/design.md 6.2');
+t('夏時間の開始日と元号の境界日が、1日もずれずに読める', () => {
+  const rows = load('test/fixtures/dates.xlsx');
+  assert.strictEqual(rows.length, 16);
+  rows.forEach(r => assert.strictEqual(Core.formatIso(Core.toDate(r.birthday)), r.expected, r.expected));
+});
+t('1950-05-07 は S25.5.7（日本時間で S25.5.6 にずれていた日）', () => {
+  const r = load('test/fixtures/dates.xlsx').find(x => x.expected === '1950-05-07');
+  assert.strictEqual(Core.formatWareki(Core.toDate(r.birthday)), 'S25.5.7');
 });
 
 console.log('\n[1ページ上限] docs/spec.md 4.10');

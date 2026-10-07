@@ -19,6 +19,17 @@
     { sign: 'M', name: '明治', start: [1868, 9, 8] }
   ];
 
+  /**
+   * Excel 読み込み時の SheetJS オプション（アプリとテストで共通に使う）。
+   *
+   * cellDates は false にして、日付セルを Excel のシリアル値（数値）のまま受け取る。
+   * true にすると SheetJS がローカル時刻の Date を作るが、日本時間では夏時間の開始日
+   * （1948-05-02 / 1949-04-03 / 1950-05-07 / 1951-05-06）だけ1日前の日付になる。
+   * シリアル値なら toDate() が UTC で計算するため、どのタイムゾーンでもずれない。
+   * （1900〜2026年の全日付を日本時間で照合して確認済み。docs/design.md 6.2）
+   */
+  var XLSX_READ_OPTIONS = { cellDates: false };
+
   /** Y/M/D から UTC 基準の Date を作る（タイムゾーンの影響を受けないため） */
   function ymd(y, m, d) { return new Date(Date.UTC(y, m - 1, d)); }
   function parts(dt) { return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate() }; }
@@ -34,7 +45,8 @@
     if (v === null || v === undefined || v === '') return null;
     if (v instanceof Date) {
       if (isNaN(v.getTime())) return null;
-      // SheetJS の cellDates はローカル時刻の Date を返すためローカル値で読み直す
+      // Date が渡された場合はローカル時刻の日付として読む（new Date(1960, 2, 1) と同じ解釈）。
+      // Excel からの読み込みでは XLSX_READ_OPTIONS によりシリアル値で受け取るため、通常ここは通らない
       return ymd(v.getFullYear(), v.getMonth() + 1, v.getDate());
     }
     if (typeof v === 'number') {
@@ -325,7 +337,7 @@
   }
 
   return {
-    ERAS: ERAS, ymd: ymd, toDate: toDate, toNum: toNum, toStr: toStr,
+    ERAS: ERAS, XLSX_READ_OPTIONS: XLSX_READ_OPTIONS, ymd: ymd, toDate: toDate, toNum: toNum, toStr: toStr,
     formatWareki: formatWareki, formatIso: formatIso, calcAge: calcAge, normalizeKey: normalizeKey,
     fiscalParams: fiscalParams, fiscalYearLabel: fiscalYearLabel, currentFy: currentFy,
     sortSheets: sortSheets, extract: extract

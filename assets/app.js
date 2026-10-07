@@ -13,7 +13,10 @@
       fr.onerror = function () { reject(new Error(file.name + ' を読み込めませんでした')); };
       fr.onload = function () {
         try {
-          var wb = XLSX.read(new Uint8Array(fr.result), { type: 'array', cellDates: true });
+          // 日付はシリアル値のまま受け取る（理由は core.js の XLSX_READ_OPTIONS を参照）
+          var opts = { type: 'array' };
+          Object.keys(Core.XLSX_READ_OPTIONS).forEach(function (k) { opts[k] = Core.XLSX_READ_OPTIONS[k]; });
+          var wb = XLSX.read(new Uint8Array(fr.result), opts);
           var name = sheetName || wb.SheetNames[0];
           var ws = wb.Sheets[name];
           if (!ws) throw new Error('シート「' + name + '」が見つかりません（' + file.name + '）');
@@ -119,6 +122,11 @@
 
   function updateCount() {
     $('selCount').textContent = '選択 ' + chosen().length + ' 件 / 全 ' + state.result.sheets.length + ' 件';
+    // 見出しのチェックを、表示中の行の状態に合わせる（全部＝オン／一部＝「－」／なし＝オフ）
+    var vis = visibleSheets();
+    var on = vis.filter(function (s) { return state.selected[s.no] !== false; }).length;
+    $('chkAll').checked = vis.length > 0 && on === vis.length;
+    $('chkAll').indeterminate = on > 0 && on < vis.length;
   }
 
   /* ===== イベント ===== */
@@ -132,8 +140,9 @@
     $('stats').innerHTML = '';
     $('msgs').innerHTML = '<div class="msg err"><h3>読み込みに失敗しました</h3><ul><li>' +
       Render.esc(e.message || e).replace(/\n/g, '<br>') + '</li></ul></div>';
+    $('staleNote').classList.add('hidden');
     $('secList').classList.add('hidden');
-    $('secPrint').classList.add('hidden');
+    closePreview();   // 隠すだけだと、Ctrl+P で前回のプレビューが印刷されてしまう
   }
 
   function run() {
@@ -153,9 +162,9 @@
 
       renderStats(state.result);
       renderMsgs(state.result);
+      $('staleNote').classList.add('hidden');
       $('secResult').classList.remove('hidden');
-      $('sheets').innerHTML = '';
-      $('secPrint').classList.add('hidden');
+      closePreview();
 
       if (state.result.sheets.length) {
         renderList();
@@ -170,10 +179,47 @@
   function preview() {
     var list = chosen();
     if (!list.length) { alert('印刷対象が選択されていません。'); return; }
-    $('sheets').innerHTML = Render.sheets(list, state.result.fiscal);
-    $('printCount').textContent = list.length + ' 枚';
+    renderPreview(list);
     $('secPrint').classList.remove('hidden');
     $('secPrint').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderPreview(list) {
+    $('sheets').innerHTML = Render.sheets(list, state.result.fiscal);
+    $('printCount').textContent = list.length + ' 枚';
+  }
+
+  function closePreview() {
+    $('sheets').innerHTML = '';
+    $('secPrint').classList.add('hidden');
+  }
+
+  function previewOpen() { return !$('secPrint').classList.contains('hidden'); }
+
+  /**
+   * 印刷対象（チェック・並び順）が変わったときに呼ぶ。
+   * プレビューが開いていれば、その場で作り直す。古いプレビューのまま印刷されるのを防ぐため。
+   * （以前はチェックを変えてもプレビューが残り、外したはずの人まで印刷できてしまった）
+   */
+  function refreshPreview() {
+    if (!previewOpen()) return;
+    var list = chosen();
+    if (list.length) renderPreview(list); else closePreview();
+  }
+
+  /**
+   * 年度・ファイルが変わったときに呼ぶ。抽出結果はもう画面の条件と一致しないので、
+   * 一覧・プレビューごと片付ける（年度を変えても前の年度の結果を印刷できてしまう事故を防ぐ。
+   * 調査書の見出しには年度が入らないため、紙を見ても気づけない）。
+   */
+  function invalidateResult() {
+    if (!state.result) return;
+    state.result = null;
+    state.selected = {};
+    closePreview();
+    $('secResult').classList.add('hidden');
+    $('secList').classList.add('hidden');
+    $('staleNote').classList.remove('hidden');
   }
 
   /** 一覧に表示中（所属フィルタ・並び順を反映）の対象扶養親族をCSVで書き出す。印刷用チェックとは独立。 */
@@ -223,23 +269,18 @@
     $('fyHint').textContent = fyHintText(parseInt($('fy').value, 10));
     $('fy').addEventListener('change', function () {
       $('fyHint').textContent = fyHintText(parseInt($('fy').value, 10));
+      invalidateResult();
       ready();
     });
-    $('fRoster').addEventListener('change', ready);
-    $('fDeps').addEventListener('change', ready);
+    $('fRoster').addEventListener('change', function () { invalidateResult(); ready(); });
+    $('fDeps').addEventListener('change', function () { invalidateResult(); ready(); });
     $('btnRun').addEventListener('click', run);
     $('filterShozoku').addEventListener('change', drawRows);
 
     // 既定の並び順を設定から反映（未設定・未知の値なら所属順のまま）
     if (Config.defaultSortOrder === 'number') $('sortOrder').value = 'number';
-    // 並び順を変えたら一覧を引き直す。印刷プレビューは作り直しになるため閉じる
-    $('sortOrder').addEventListener('change', function () {
-      drawRows();
-      if (!$('secPrint').classList.contains('hidden')) {
-        $('sheets').innerHTML = '';
-        $('secPrint').classList.add('hidden');
-      }
-    });
+    // 並び順を変えたら一覧を引き直し、プレビューが開いていれば新しい並びで作り直す
+    $('sortOrder').addEventListener('change', function () { drawRows(); refreshPreview(); });
 
     $('list').addEventListener('change', function (e) {
       var cb = e.target;
@@ -247,24 +288,21 @@
       state.selected[cb.dataset.no] = cb.checked;
       cb.closest('tr').classList.toggle('off', !cb.checked);
       updateCount();
+      refreshPreview();
     });
-    $('chkAll').addEventListener('change', function () {
-      var on = $('chkAll').checked;
+    function selectVisible(on) {
       visibleSheets().forEach(function (s) { state.selected[s.no] = on; });
       drawRows();
-    });
-    $('btnAll').addEventListener('click', function () {
-      visibleSheets().forEach(function (s) { state.selected[s.no] = true; }); drawRows();
-    });
-    $('btnNone').addEventListener('click', function () {
-      visibleSheets().forEach(function (s) { state.selected[s.no] = false; }); drawRows();
-    });
+      refreshPreview();
+    }
+    $('chkAll').addEventListener('change', function () { selectVisible($('chkAll').checked); });
+    $('btnAll').addEventListener('click', function () { selectVisible(true); });
+    $('btnNone').addEventListener('click', function () { selectVisible(false); });
     $('btnPreview').addEventListener('click', preview);
     $('btnCsv').addEventListener('click', exportCsv);
     $('btnPrint').addEventListener('click', function () { window.print(); });
     $('btnBack').addEventListener('click', function () {
-      $('sheets').innerHTML = '';
-      $('secPrint').classList.add('hidden');
+      closePreview();
       $('secList').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     ready();

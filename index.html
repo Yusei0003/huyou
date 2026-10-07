@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>扶養親族確認調査書 印刷システム</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%231f4e79'/%3E%3Ctext x='32' y='45' font-size='40' text-anchor='middle' fill='%23fff' font-family='Yu Gothic UI, Meiryo, sans-serif'%3E%E6%89%B6%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/ui.css">
 <link rel="stylesheet" href="assets/form.css">
 </head>
@@ -65,6 +66,7 @@
     </div>
     <div class="row">
       <button id="btnRun" class="primary" disabled>読み込んで抽出する</button>
+      <span class="staleNote hidden" id="staleNote">条件が変わったため、結果を消しました。もう一度「読み込んで抽出する」を押してください。</span>
       <span class="hint">🔒 ファイルはこのPCの中だけで処理されます。外部には一切送信しません。</span>
     </div>
   </section>

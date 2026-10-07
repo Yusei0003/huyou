@@ -1,5 +1,6 @@
 /* 単体テスト（開発用）: node test/csv.test.js */
 'use strict';
+process.env.TZ = 'Asia/Tokyo';   // 利用者のPCと同じ日本時間で動かす（core.test.js と同じ理由）
 const assert = require('assert');
 const Core = require('../assets/core.js');
 const Csv = require('../assets/csv.js');
